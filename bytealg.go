@@ -95,7 +95,7 @@ func IndexAt(p, sep []byte, at int) int {
 	}
 	i := bytes.Index(p[at:], sep)
 	if i < 0 {
-		return i
+		return -1
 	}
 	return i + at
 }
