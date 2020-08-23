@@ -71,6 +71,9 @@ func trim(p, cut []byte, dir int) []byte {
 }
 
 func AppendSplit(buf [][]byte, s, sep []byte, n int) [][]byte {
+	if len(s) == 0 {
+		return buf
+	}
 	if n < 0 {
 		n = bytes.Count(s, sep) + 1
 	}

@@ -22,6 +22,9 @@ func TrimRightStr(p, cut string) string {
 }
 
 func AppendSplitStr(buf []string, s, sep string, n int) []string {
+	if len(s) == 0 {
+		return buf
+	}
 	if n < 0 {
 		n = strings.Count(s, sep) + 1
 	}
