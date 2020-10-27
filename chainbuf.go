@@ -1,6 +1,9 @@
 package bytealg
 
 import (
+	"reflect"
+	"unsafe"
+
 	"github.com/koykov/any2bytes"
 	"github.com/koykov/fastconv"
 )
@@ -62,6 +65,25 @@ func (b *ChainBuf) Len() int {
 // Get capacity of the buffer.
 func (b *ChainBuf) Cap() int {
 	return cap(*b)
+}
+
+// Grow length and capacity of the buffer.
+func (b *ChainBuf) Grow(cap int) *ChainBuf {
+	if cap < 0 {
+		return b
+	}
+	// Get buffer header.
+	h := *(*reflect.SliceHeader)(unsafe.Pointer(b))
+	if cap < h.Cap {
+		// Just increase header's length if capacity allows
+		h.Len = cap
+		// .. and restore the buffer from the header.
+		*b = *(*[]byte)(unsafe.Pointer(&h))
+	} else {
+		// Append necessary space.
+		*b = append(*b, make([]byte, cap-b.Len())...)
+	}
+	return b
 }
 
 // Reset length of the buffer.
