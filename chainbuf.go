@@ -85,6 +85,16 @@ func (b *ChainBuf) ReplaceStr(old, new string, n int) *ChainBuf {
 	return b.Replace(fastconv.S2B(old), fastconv.S2B(new), n)
 }
 
+// Replace all old to new bytes in buffer.
+func (b *ChainBuf) ReplaceAll(old, new []byte) *ChainBuf {
+	return b.Replace(old, new, -1)
+}
+
+// Replace all old to new strings in buffer.
+func (b *ChainBuf) ReplaceStrAll(old, new string) *ChainBuf {
+	return b.Replace(fastconv.S2B(old), fastconv.S2B(new), -1)
+}
+
 // Get length of the buffer.
 func (b *ChainBuf) Len() int {
 	return len(*b)
