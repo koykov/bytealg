@@ -57,6 +57,34 @@ func (b *ChainBuf) WriteBool(v bool) *ChainBuf {
 	return b
 }
 
+// Replace old to new bytes in buffer.
+func (b *ChainBuf) Replace(old, new []byte, n int) *ChainBuf {
+	if b.Len() == 0 || n == 0 {
+		return b
+	}
+	var i, at, c int
+	// Use the same byte buffer to make replacement and avoid alloc.
+	dst := (*b)[b.Len():]
+	for {
+		if i = IndexAt(*b, old, at); i < 0 || c == n {
+			dst = append(dst, (*b)[at:]...)
+			break
+		}
+		dst = append(dst, (*b)[at:i]...)
+		dst = append(dst, new...)
+		at = i + len(old)
+		c++
+	}
+	// Move result to the beginning of buffer.
+	b.Reset().Write(dst)
+	return b
+}
+
+// Replace old to new strings in buffer.
+func (b *ChainBuf) ReplaceStr(old, new string, n int) *ChainBuf {
+	return b.Replace(fastconv.S2B(old), fastconv.S2B(new), n)
+}
+
 // Get length of the buffer.
 func (b *ChainBuf) Len() int {
 	return len(*b)
