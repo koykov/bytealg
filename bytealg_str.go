@@ -8,7 +8,7 @@ import (
 
 var (
 	// Suppress go vet warnings.
-	_, _, _ = TrimLeftStr, TrimRightStr, CopyStr
+	_, _, _, _ = TrimLeftStr, TrimRightStr, CopyStr, ToTitleStr
 )
 
 // Alloc-free string trim.
@@ -53,6 +53,10 @@ func AppendSplitStr(buf []string, s, sep string, n int) []string {
 func IndexAtStr(s, sep string, at int) int {
 	return IndexAt(fc.S2B(s), fc.S2B(sep), at)
 }
+
+func ToUpperStr(s string) string { return fc.B2S(ToUpper(fc.S2B(s))) }
+func ToLowerStr(s string) string { return fc.B2S(ToLower(fc.S2B(s))) }
+func ToTitleStr(s string) string { return fc.B2S(ToTitle(fc.S2B(s))) }
 
 // Make a copy of string.
 func CopyStr(s string) string {

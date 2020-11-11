@@ -82,14 +82,16 @@ func TestIndexAt(t *testing.T) {
 }
 
 func TestToLower(t *testing.T) {
-	r := ToLower(toUpper)
+	cpy := Copy(toUpper)
+	r := ToLower(cpy)
 	if !bytes.Equal(r, toLower) {
 		t.Error("ToLower: mismatch result and expectation")
 	}
 }
 
 func TestToUpper(t *testing.T) {
-	r := ToUpper(toLower)
+	cpy := Copy(toLower)
+	r := ToUpper(cpy)
 	if !bytes.Equal(r, toUpper) {
 		t.Error("ToUpper: mismatch result and expectation")
 	}
