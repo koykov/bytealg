@@ -6,6 +6,11 @@ import (
 	fc "github.com/koykov/fastconv"
 )
 
+var (
+	// Suppress go vet warnings.
+	_, _, _ = TrimLeftStr, TrimRightStr, CopyStr
+)
+
 // Alloc-free string trim.
 func TrimStr(p, cut string) string {
 	return fc.B2S(trim(fc.S2B(p), fc.S2B(cut), trimBoth))
@@ -49,6 +54,7 @@ func IndexAtStr(s, sep string, at int) int {
 	return IndexAt(fc.S2B(s), fc.S2B(sep), at)
 }
 
+// Make a copy of string.
 func CopyStr(s string) string {
 	return fc.B2S(append([]byte(nil), s...))
 }

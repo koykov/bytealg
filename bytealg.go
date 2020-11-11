@@ -129,6 +129,7 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 	return p
 }
 
+// Make a copy of byte array.
 func Copy(p []byte) []byte {
 	return append([]byte(nil), p...)
 }
