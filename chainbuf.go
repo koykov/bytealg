@@ -16,9 +16,19 @@ func (b *ChainBuf) Bytes() []byte {
 	return *b
 }
 
+// Get copy of the buffer.
+func (b *ChainBuf) BytesCopy() []byte {
+	return Copy(*b)
+}
+
 // Get contents of the buffer as string.
 func (b *ChainBuf) String() string {
 	return fastconv.B2S(*b)
+}
+
+// Get copy of the buffer as string.
+func (b *ChainBuf) StringCopy() string {
+	return CopyStr(fastconv.B2S(*b))
 }
 
 // Write bytes to the buffer.
