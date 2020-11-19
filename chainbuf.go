@@ -55,6 +55,12 @@ func (b *ChainBuf) WriteInt(i int64) *ChainBuf {
 	return b
 }
 
+// Write unsigned integer value to the buffer.
+func (b *ChainBuf) WriteUint(u uint64) *ChainBuf {
+	*b, _ = any2bytes.UintToBytes(*b, u)
+	return b
+}
+
 // Write float value to the buffer.
 func (b *ChainBuf) WriteFloat(f float64) *ChainBuf {
 	*b, _ = any2bytes.FloatToBytes(*b, f)
