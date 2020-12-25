@@ -15,6 +15,11 @@ type Byteptr struct {
 	l int
 }
 
+// Set new offset and length.
+func (m *Byteptr) Set(o uint64, l int) {
+	m.o, m.l = o, l
+}
+
 // Convert byte sequence to string.
 func (m *Byteptr) String() string {
 	return fastconv.B2S(m.Bytes())
