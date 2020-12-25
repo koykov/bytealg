@@ -20,6 +20,11 @@ func (m *Byteptr) Set(o uint64, l int) {
 	m.o, m.l = o, l
 }
 
+// Get length of underlying byte array.
+func (m *Byteptr) Len() int {
+	return m.l
+}
+
 // Convert byte sequence to string.
 func (m *Byteptr) String() string {
 	return fastconv.B2S(m.Bytes())
