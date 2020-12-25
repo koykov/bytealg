@@ -2,8 +2,10 @@ package bytealg
 
 import (
 	"bytes"
+	"reflect"
 	"unicode"
 	"unicode/utf8"
+	"unsafe"
 )
 
 const (
@@ -132,4 +134,26 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 // Make a copy of byte array.
 func Copy(p []byte) []byte {
 	return append([]byte(nil), p...)
+}
+
+// Increase length of the byte array.
+//
+// Two cases are possible:
+// * byte array has enough space;
+// * need to add extra space to the array.
+func Grow(p []byte, cap int) []byte {
+	if cap <= 0 {
+		return p
+	}
+	// Get byte array header.
+	h := *(*reflect.SliceHeader)(unsafe.Pointer(&p))
+	if cap <= h.Cap {
+		// p already has enough space.
+		h.Len = cap
+		p = *(*[]byte)(unsafe.Pointer(&h))
+	} else {
+		// Need to add extra space to p.
+		p = append(p, make([]byte, cap-h.Len)...)
+	}
+	return p
 }
