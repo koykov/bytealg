@@ -141,19 +141,26 @@ func Copy(p []byte) []byte {
 // Two cases are possible:
 // * byte array has enough space;
 // * need to add extra space to the array.
-func Grow(p []byte, cap int) []byte {
-	if cap <= 0 {
+func Grow(p []byte, newLen int) []byte {
+	if newLen <= 0 {
 		return p
 	}
 	// Get byte array header.
 	h := *(*reflect.SliceHeader)(unsafe.Pointer(&p))
-	if cap <= h.Cap {
+	if newLen <= h.Cap {
 		// p already has enough space.
-		h.Len = cap
+		h.Len = newLen
 		p = *(*[]byte)(unsafe.Pointer(&h))
 	} else {
 		// Need to add extra space to p.
-		p = append(p, make([]byte, cap-h.Len)...)
+		p = append(p, make([]byte, newLen-h.Len)...)
 	}
 	return p
+}
+
+// Increase length of byte array to actual length + delta.
+//
+// See Grow().
+func GrowDelta(p []byte, delta int) []byte {
+	return Grow(p, len(p)+delta)
 }
