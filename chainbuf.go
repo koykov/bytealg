@@ -121,23 +121,30 @@ func (b *ChainBuf) Cap() int {
 	return cap(*b)
 }
 
-// Grow length and capacity of the buffer.
-func (b *ChainBuf) Grow(cap int) *ChainBuf {
-	if cap < 0 {
+// Grow length of the buffer.
+func (b *ChainBuf) Grow(newLen int) *ChainBuf {
+	if newLen <= 0 {
 		return b
 	}
 	// Get buffer header.
 	h := *(*reflect.SliceHeader)(unsafe.Pointer(b))
-	if cap < h.Cap {
+	if newLen < h.Cap {
 		// Just increase header's length if capacity allows
-		h.Len = cap
+		h.Len = newLen
 		// .. and restore the buffer from the header.
 		*b = *(*[]byte)(unsafe.Pointer(&h))
 	} else {
 		// Append necessary space.
-		*b = append(*b, make([]byte, cap-b.Len())...)
+		*b = append(*b, make([]byte, newLen-b.Len())...)
 	}
 	return b
+}
+
+// Grow length of the buffer to actual length + delta.
+//
+// See Grow().
+func (b *ChainBuf) GrowDelta(delta int) *ChainBuf {
+	return b.Grow(b.Len() + delta)
 }
 
 // Reset length of the buffer.
