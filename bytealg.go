@@ -124,11 +124,15 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 			if rl < 0 {
 				rl = len(string(utf8.RuneError))
 			}
+			if nbytes+rl > maxbytes {
+				maxbytes = maxbytes*2 + utf8.UTFMax
+				p = Grow(p, maxbytes)
+			}
 			nbytes += utf8.EncodeRune(p[nbytes:maxbytes], r)
 		}
 		i += wid
 	}
-	return p
+	return p[:nbytes]
 }
 
 // Make a copy of byte array.
