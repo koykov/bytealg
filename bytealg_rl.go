@@ -2,6 +2,9 @@ package bytealg
 
 // Loop rolling versions of several functions.
 
+// Check if p contains b.
+//
+// This function designed to use with largest input.
 func HasByte(p []byte, b byte) bool {
 	s := p
 	for len(s) >= 8 {
