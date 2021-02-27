@@ -26,6 +26,7 @@ func TrimRightStr(p, cut string) string {
 	return fc.B2S(trim(fc.S2B(p), fc.S2B(cut), trimRight))
 }
 
+// Split s to buf using sep as separator.
 func AppendSplitStr(buf []string, s, sep string, n int) []string {
 	if len(s) == 0 {
 		return buf
@@ -54,8 +55,13 @@ func IndexAtStr(s, sep string, at int) int {
 	return IndexAt(fc.S2B(s), fc.S2B(sep), at)
 }
 
+// ToUpperStr is an alloc-free replacement of bytes.ToUpperStr() function.
 func ToUpperStr(s string) string { return fc.B2S(ToUpper(fc.S2B(s))) }
+
+// ToLowerStr is an alloc-free replacement of bytes.ToLowerStr() function.
 func ToLowerStr(s string) string { return fc.B2S(ToLower(fc.S2B(s))) }
+
+// ToTitleStr is an alloc-free replacement of bytes.ToTitleStr() function.
 func ToTitleStr(s string) string { return fc.B2S(ToTitle(fc.S2B(s))) }
 
 // Make a copy of string.
