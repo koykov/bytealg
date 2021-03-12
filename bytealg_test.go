@@ -74,10 +74,40 @@ func BenchmarkAppendSplit(b *testing.B) {
 	}
 }
 
+func BenchmarkSplit_Native(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		r := bytes.Split(splitOrigin, splitSep)
+		if !EqualSet(r, splitExpect) {
+			b.Error("Split: mismatch result and expectation")
+		}
+	}
+}
+
 func TestIndexAt(t *testing.T) {
 	r := IndexAt(idxAt, []byte("#"), 8)
 	if r != idxExpect {
 		t.Error("IndexAt: mismatch result and expectation")
+	}
+}
+
+func BenchmarkIndexAt(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		r := IndexAt(idxAt, []byte("#"), 8)
+		if r != idxExpect {
+			b.Error("IndexAt: mismatch result and expectation")
+		}
+	}
+}
+
+func BenchmarkIndexByteAtRL(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		r := IndexByteAtRL(idxAt, '#', 8)
+		if r != idxExpect {
+			b.Error("IndexByteAtRL: mismatch result and expectation")
+		}
 	}
 }
 
