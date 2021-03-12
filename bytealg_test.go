@@ -119,11 +119,55 @@ func TestToLower(t *testing.T) {
 	}
 }
 
+func BenchmarkToLower(b *testing.B) {
+	buf := make([]byte, 0, len(cpyOrigin))
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		buf = append(buf[:0], cpyOrigin...)
+		r := ToLower(buf)
+		if !bytes.Equal(r, cpyExpect) {
+			b.Error("ToLower: mismatch result and expectation")
+		}
+	}
+}
+
+func BenchmarkToLower_Native(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		r := bytes.ToLower(cpyOrigin)
+		if !bytes.Equal(r, cpyExpect) {
+			b.Error("ToLower: mismatch result and expectation")
+		}
+	}
+}
+
 func TestToUpper(t *testing.T) {
 	cpy := Copy(toLower)
 	r := ToUpper(cpy)
 	if !bytes.Equal(r, toUpper) {
 		t.Error("ToUpper: mismatch result and expectation")
+	}
+}
+
+func BenchmarkToUpper(b *testing.B) {
+	buf := make([]byte, 0, len(toLower))
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		buf = append(buf[:0], toLower...)
+		r := ToUpper(buf)
+		if !bytes.Equal(r, toUpper) {
+			b.Error("ToUpper: mismatch result and expectation")
+		}
+	}
+}
+
+func BenchmarkToUpper_Native(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		r := bytes.ToUpper(toLower)
+		if !bytes.Equal(r, toUpper) {
+			b.Error("ToUpper: mismatch result and expectation")
+		}
 	}
 }
 
