@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/koykov/any2bytes"
 	"github.com/koykov/fastconv"
+	"github.com/koykov/x2bytes"
 )
 
 // Primitive byte buffer with chain call support.
@@ -51,25 +51,25 @@ func (b *ChainBuf) WriteStr(s string) *ChainBuf {
 
 // Write integer value to the buffer.
 func (b *ChainBuf) WriteInt(i int64) *ChainBuf {
-	*b, _ = any2bytes.IntToBytes(*b, i)
+	*b, _ = x2bytes.IntToBytes(*b, i)
 	return b
 }
 
 // Write unsigned integer value to the buffer.
 func (b *ChainBuf) WriteUint(u uint64) *ChainBuf {
-	*b, _ = any2bytes.UintToBytes(*b, u)
+	*b, _ = x2bytes.UintToBytes(*b, u)
 	return b
 }
 
 // Write float value to the buffer.
 func (b *ChainBuf) WriteFloat(f float64) *ChainBuf {
-	*b, _ = any2bytes.FloatToBytes(*b, f)
+	*b, _ = x2bytes.FloatToBytes(*b, f)
 	return b
 }
 
 // Write boolean value to the buffer.
 func (b *ChainBuf) WriteBool(v bool) *ChainBuf {
-	*b, _ = any2bytes.BoolToBytes(*b, v)
+	*b, _ = x2bytes.BoolToBytes(*b, v)
 	return b
 }
 
@@ -159,5 +159,5 @@ func ChainBufToBytes(dst []byte, val interface{}) ([]byte, error) {
 		dst = append(dst, *b...)
 		return dst, nil
 	}
-	return dst, any2bytes.ErrUnknownType
+	return dst, x2bytes.ErrUnknownType
 }
