@@ -20,6 +20,11 @@ func (m *Byteptr) Set(o uint64, l int) {
 	m.o, m.l = o, l
 }
 
+// Gen offset in virtual memory.
+func (m *Byteptr) Offset() uint64 {
+	return m.o
+}
+
 // Get length of underlying byte array.
 func (m *Byteptr) Len() int {
 	return m.l
