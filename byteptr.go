@@ -20,9 +20,17 @@ func (m *Byteptr) Set(o uint64, l int) {
 	m.o, m.l = o, l
 }
 
+func (m *Byteptr) SetOffset(offset uint64) {
+	m.o = offset
+}
+
 // Gen offset in virtual memory.
 func (m *Byteptr) Offset() uint64 {
 	return m.o
+}
+
+func (m *Byteptr) SetLen(len int) {
+	m.l = len
 }
 
 // Get length of underlying byte array.
@@ -43,4 +51,8 @@ func (m *Byteptr) Bytes() []byte {
 		Cap:  m.l,
 	}
 	return *(*[]byte)(unsafe.Pointer(&h))
+}
+
+func (m *Byteptr) Reset() {
+	m.Set(0, 0)
 }
