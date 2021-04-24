@@ -10,49 +10,49 @@ import (
 // Byte sequence.
 type Byteptr struct {
 	// Offset in virtual memory.
-	o uint64
-	// Length of bytes array.
-	l int
+	offset uint64
+	// Limit of bytes array.
+	limit int
 }
 
-// Set new offset and length.
-func (m *Byteptr) Set(o uint64, l int) {
-	m.o, m.l = o, l
+// Set new offset and limit.
+func (p *Byteptr) Set(offset uint64, limit int) {
+	p.offset, p.limit = offset, limit
 }
 
-func (m *Byteptr) SetOffset(offset uint64) {
-	m.o = offset
+func (p *Byteptr) SetOffset(offset uint64) {
+	p.offset = offset
 }
 
 // Gen offset in virtual memory.
-func (m *Byteptr) Offset() uint64 {
-	return m.o
+func (p *Byteptr) Offset() uint64 {
+	return p.offset
 }
 
-func (m *Byteptr) SetLen(len int) {
-	m.l = len
+func (p *Byteptr) SetLimit(limit int) {
+	p.limit = limit
 }
 
-// Get length of underlying byte array.
-func (m *Byteptr) Len() int {
-	return m.l
+// Get limit of underlying byte array.
+func (p *Byteptr) Limit() int {
+	return p.limit
 }
 
 // Convert byte sequence to string.
-func (m *Byteptr) String() string {
-	return fastconv.B2S(m.Bytes())
+func (p *Byteptr) String() string {
+	return fastconv.B2S(p.Bytes())
 }
 
 // Convert byte sequence to byte array.
-func (m *Byteptr) Bytes() []byte {
+func (p *Byteptr) Bytes() []byte {
 	h := reflect.SliceHeader{
-		Data: uintptr(m.o),
-		Len:  m.l,
-		Cap:  m.l,
+		Data: uintptr(p.offset),
+		Len:  p.limit,
+		Cap:  p.limit,
 	}
 	return *(*[]byte)(unsafe.Pointer(&h))
 }
 
-func (m *Byteptr) Reset() {
-	m.Set(0, 0)
+func (p *Byteptr) Reset() {
+	p.Set(0, 0)
 }
