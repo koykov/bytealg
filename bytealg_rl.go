@@ -128,7 +128,7 @@ func IndexByteAtRL(p []byte, b byte, at int) int {
 		s = s[2:]
 		n += 2
 	}
-	if s[0] == b {
+	if len(s) > 0 && s[0] == b {
 		return at + n
 	}
 	return -1
