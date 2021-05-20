@@ -3,8 +3,6 @@ package bytealg
 import (
 	"reflect"
 	"unsafe"
-
-	"github.com/koykov/fastconv"
 )
 
 // Byte sequence.
@@ -40,7 +38,11 @@ func (p *Byteptr) Limit() int {
 
 // Convert byte sequence to string.
 func (p *Byteptr) String() string {
-	return fastconv.B2S(p.Bytes())
+	h := reflect.StringHeader{
+		Data: uintptr(p.offset),
+		Len:  p.limit,
+	}
+	return *(*string)(unsafe.Pointer(&h))
 }
 
 // Convert byte sequence to byte array.
