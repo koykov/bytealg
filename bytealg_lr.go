@@ -5,7 +5,7 @@ package bytealg
 // Check if p contains b.
 //
 // This function designed to use with largest input.
-func HasByte(p []byte, b byte) bool {
+func HasByteLR(p []byte, b byte) bool {
 	s := p
 	for len(s) >= 8 {
 		if s[0] == b {
@@ -67,7 +67,7 @@ func HasByte(p []byte, b byte) bool {
 }
 
 // Loop rolling version of IndexAt().
-func IndexByteAtRL(p []byte, b byte, at int) int {
+func IndexByteAtLR(p []byte, b byte, at int) int {
 	if at < 0 {
 		return -1
 	}

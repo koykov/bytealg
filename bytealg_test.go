@@ -102,12 +102,12 @@ func BenchmarkIndexAt(b *testing.B) {
 	}
 }
 
-func BenchmarkIndexByteAtRL(b *testing.B) {
+func BenchmarkIndexByteAtLR(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		r := IndexByteAtRL(idxAt, '#', 8)
+		r := IndexByteAtLR(idxAt, '#', 8)
 		if r != idxExpect {
-			b.Error("IndexByteAtRL: mismatch result and expectation")
+			b.Error("IndexByteAtLR: mismatch result and expectation")
 		}
 	}
 }
