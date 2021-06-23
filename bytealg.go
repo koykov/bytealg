@@ -98,7 +98,7 @@ func AppendSplit(buf [][]byte, s, sep []byte, n int) [][]byte {
 
 // IndexAt is equal to bytes.Index() but doesn't consider occurrences of sep in p[:at].
 func IndexAt(p, sep []byte, at int) int {
-	if at < 0 {
+	if at < 0 || at >= len(p) {
 		return -1
 	}
 	i := bytes.Index(p[at:], sep)

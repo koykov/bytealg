@@ -68,7 +68,7 @@ func HasByteLR(p []byte, b byte) bool {
 
 // Loop rolling version of IndexAt().
 func IndexByteAtLR(p []byte, b byte, at int) int {
-	if at < 0 {
+	if at < 0 || at >= len(p) {
 		return -1
 	}
 
