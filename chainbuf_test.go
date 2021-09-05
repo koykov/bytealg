@@ -1,5 +1,7 @@
 package bytealg
 
+// todo remove due to move to github.com/koykov/bytebuf
+
 import (
 	"bytes"
 	"strconv"
