@@ -54,17 +54,15 @@ func TrimRight(p, cut []byte) []byte {
 func trim(p, cut []byte, dir int) []byte {
 	l, r := 0, len(p)-1
 	if dir == trimBoth || dir == trimLeft {
-		for i, c := range p {
-			if !bytes.Contains(cut, []byte{c}) {
-				l = i
+		for ; l < len(p); l++ {
+			if !bytes.Contains(cut, []byte{p[l]}) {
 				break
 			}
 		}
 	}
 	if dir == trimBoth || dir == trimRight {
-		for i := r; i >= 0; i-- {
-			if !bytes.Contains(cut, []byte{p[i]}) {
-				r = i
+		for ; r >= l; r-- {
+			if !bytes.Contains(cut, []byte{p[r]}) {
 				break
 			}
 		}
