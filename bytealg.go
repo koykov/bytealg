@@ -6,6 +6,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
+
+	fc "github.com/koykov/fastconv"
 )
 
 const (
@@ -100,6 +102,18 @@ func IndexAt(p, sep []byte, at int) int {
 		return -1
 	}
 	i := bytes.Index(p[at:], sep)
+	if i < 0 {
+		return -1
+	}
+	return i + at
+}
+
+// IndexAnyAt is equal to bytes.IndexAny() but doesn't consider occurrences of sep in p[:at].
+func IndexAnyAt(p, sep []byte, at int) int {
+	if at < 0 || at >= len(p) {
+		return -1
+	}
+	i := bytes.IndexAny(p[at:], fc.B2S(sep))
 	if i < 0 {
 		return -1
 	}

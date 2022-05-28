@@ -8,7 +8,7 @@ import (
 
 var (
 	// Suppress go vet warnings.
-	_, _, _, _ = TrimLeftStr, TrimRightStr, CopyStr, ToTitleStr
+	_, _, _, _, _ = TrimLeftStr, TrimRightStr, CopyStr, ToTitleStr, IndexAnyAtStr
 )
 
 // Alloc-free string trim.
@@ -53,6 +53,11 @@ func AppendSplitStr(buf []string, s, sep string, n int) []string {
 // IndexAtStr is equal to strings.Index() but doesn't consider occurrences of sep in s[:at].
 func IndexAtStr(s, sep string, at int) int {
 	return IndexAt(fc.S2B(s), fc.S2B(sep), at)
+}
+
+// IndexAnyAtStr is equal to strings.IndexAny() but doesn't consider occurrences of sep in s[:at].
+func IndexAnyAtStr(s, sep string, at int) int {
+	return IndexAnyAt(fc.S2B(s), fc.S2B(sep), at)
 }
 
 // ToUpperStr is an alloc-free replacement of bytes.ToUpperStr() function.
