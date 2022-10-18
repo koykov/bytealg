@@ -11,22 +11,20 @@ var (
 	_, _, _, _, _ = TrimLeftStr, TrimRightStr, CopyStr, ToTitleStr, IndexAnyAtStr
 )
 
-// Alloc-free string trim.
+// TrimStr makes alloc-free string trim.
 func TrimStr(p, cut string) string {
 	return fc.B2S(trim(fc.S2B(p), fc.S2B(cut), trimBoth))
 }
 
-// String left trim.
 func TrimLeftStr(p, cut string) string {
 	return fc.B2S(trim(fc.S2B(p), fc.S2B(cut), trimLeft))
 }
 
-// String right trim.
 func TrimRightStr(p, cut string) string {
 	return fc.B2S(trim(fc.S2B(p), fc.S2B(cut), trimRight))
 }
 
-// Split s to buf using sep as separator.
+// AppendSplitStr splits s to buf using sep as separator.
 func AppendSplitStr(buf []string, s, sep string, n int) []string {
 	if len(s) == 0 {
 		return buf
@@ -69,7 +67,7 @@ func ToLowerStr(s string) string { return fc.B2S(ToLower(fc.S2B(s))) }
 // ToTitleStr is an alloc-free replacement of bytes.ToTitleStr() function.
 func ToTitleStr(s string) string { return fc.B2S(ToTitle(fc.S2B(s))) }
 
-// Make a copy of string.
+// CopyStr makes a copy of string.
 func CopyStr(s string) string {
 	return fc.B2S(append([]byte(nil), s...))
 }

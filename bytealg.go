@@ -22,7 +22,7 @@ var (
 	_, _, _ = TrimLeft, TrimRight, ToTitle
 )
 
-// Check if two slices of bytes slices is equal.
+// EqualSet checks if two slices of bytes slices is equal.
 func EqualSet(a, b [][]byte) bool {
 	if len(a) != len(b) {
 		return false
@@ -35,17 +35,15 @@ func EqualSet(a, b [][]byte) bool {
 	return true
 }
 
-// Fast and alloc-free trim.
+// Trim makes fast and alloc-free trim.
 func Trim(p, cut []byte) []byte {
 	return trim(p, cut, trimBoth)
 }
 
-// Left trim.
 func TrimLeft(p, cut []byte) []byte {
 	return trim(p, cut, trimLeft)
 }
 
-// Right trim.
 func TrimRight(p, cut []byte) []byte {
 	return trim(p, cut, trimRight)
 }
@@ -72,7 +70,7 @@ func trim(p, cut []byte, dir int) []byte {
 	return p[l : r+1]
 }
 
-// Split s to buf using sep as separator.
+// AppendSplit splits s to buf using sep as separator.
 //
 // This function if an alloc-free replacement of bytes.Split() function.
 func AppendSplit(buf [][]byte, s, sep []byte, n int) [][]byte {
@@ -158,12 +156,12 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 	return p[:nbytes]
 }
 
-// Make a copy of byte array.
+// Copy makes a copy of byte array.
 func Copy(p []byte) []byte {
 	return append([]byte(nil), p...)
 }
 
-// Increase length of the byte array.
+// Grow increases length of the byte array.
 //
 // Two cases are possible:
 // * byte array has enough space;
@@ -185,7 +183,7 @@ func Grow(p []byte, newLen int) []byte {
 	return p
 }
 
-// Increase length of byte array to actual length + delta.
+// GrowDelta increases length of byte array to actual length + delta.
 //
 // See Grow().
 func GrowDelta(p []byte, delta int) []byte {
