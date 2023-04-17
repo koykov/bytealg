@@ -7,7 +7,7 @@ import (
 	"unicode/utf8"
 	"unsafe"
 
-	fc "github.com/koykov/fastconv"
+	"github.com/koykov/byteseq"
 )
 
 const (
@@ -17,18 +17,13 @@ const (
 	trimRight = 2
 )
 
-var (
-	// Suppress go vet warnings.
-	_, _, _ = TrimLeft, TrimRight, ToTitle
-)
-
 // EqualSet checks if two slices of bytes slices is equal.
-func EqualSet(a, b [][]byte) bool {
+func EqualSet[T byteseq.Byteseq](a, b []T) bool {
 	if len(a) != len(b) {
 		return false
 	}
 	for i := range a {
-		if !bytes.Equal(a[i], b[i]) {
+		if !bytes.Equal(byteseq.Q2B(a[i]), byteseq.Q2B(b[i])) {
 			return false
 		}
 	}
@@ -36,70 +31,73 @@ func EqualSet(a, b [][]byte) bool {
 }
 
 // Trim makes fast and alloc-free trim.
-func Trim(p, cut []byte) []byte {
+func Trim[T byteseq.Byteseq](p, cut T) T {
 	return trim(p, cut, trimBoth)
 }
 
-func TrimLeft(p, cut []byte) []byte {
+func TrimLeft[T byteseq.Byteseq](p, cut T) T {
 	return trim(p, cut, trimLeft)
 }
 
-func TrimRight(p, cut []byte) []byte {
+func TrimRight[T byteseq.Byteseq](p, cut T) T {
 	return trim(p, cut, trimRight)
 }
 
 // Generic trim.
 //
 // Just calculates trim edges and return sub-slice.
-func trim(p, cut []byte, dir int) []byte {
+func trim[T byteseq.Byteseq](p, cut T, dir int) T {
 	l, r := 0, len(p)-1
+	pb, cb := byteseq.Q2B(p), byteseq.Q2B(cut)
 	if dir == trimBoth || dir == trimLeft {
-		for ; l < len(p); l++ {
-			if !bytes.Contains(cut, []byte{p[l]}) {
+		for ; l < len(pb); l++ {
+			if !bytes.Contains(cb, []byte{pb[l]}) {
 				break
 			}
 		}
 	}
 	if dir == trimBoth || dir == trimRight {
 		for ; r >= l; r-- {
-			if !bytes.Contains(cut, []byte{p[r]}) {
+			if !bytes.Contains(cb, []byte{pb[r]}) {
 				break
 			}
 		}
 	}
-	return p[l : r+1]
+	return byteseq.B2Q[T](pb[l : r+1])
 }
 
 // AppendSplit splits s to buf using sep as separator.
 //
 // This function if an alloc-free replacement of bytes.Split() function.
-func AppendSplit(buf [][]byte, s, sep []byte, n int) [][]byte {
+func AppendSplit[T byteseq.Byteseq](buf []T, s, sep T, n int) []T {
 	if len(s) == 0 {
 		return buf
 	}
+	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
 	if n < 0 {
-		n = bytes.Count(s, sep) + 1
+		n = bytes.Count(sb, pb) + 1
 	}
 	i := 0
 	for i < n {
-		m := bytes.Index(s, sep)
+		m := bytes.Index(sb, pb)
 		if m < 0 {
 			break
 		}
-		buf = append(buf, s[:m:m])
-		s = s[m+len(sep):]
+		buf = append(buf, byteseq.B2Q[T](sb[:m:m]))
+		sb = sb[m+len(sep):]
 		i++
 	}
-	buf = append(buf, s)
+	buf = append(buf, byteseq.B2Q[T](sb))
 	return buf[:i+1]
 }
 
 // IndexAt is equal to bytes.Index() but doesn't consider occurrences of sep in p[:at].
-func IndexAt(p, sep []byte, at int) int {
+func IndexAt[T byteseq.Byteseq](p, sep T, at int) int {
 	if at < 0 || at >= len(p) {
 		return -1
 	}
-	i := bytes.Index(p[at:], sep)
+	pb, sb := byteseq.Q2B(p), byteseq.Q2B(sep)
+	i := bytes.Index(pb[at:], sb)
 	if i < 0 {
 		return -1
 	}
@@ -107,11 +105,12 @@ func IndexAt(p, sep []byte, at int) int {
 }
 
 // IndexAnyAt is equal to bytes.IndexAny() but doesn't consider occurrences of sep in p[:at].
-func IndexAnyAt(p, sep []byte, at int) int {
+func IndexAnyAt[T byteseq.Byteseq](p, sep T, at int) int {
 	if at < 0 || at >= len(p) {
 		return -1
 	}
-	i := bytes.IndexAny(p[at:], fc.B2S(sep))
+	pb, ss := byteseq.Q2B(p), byteseq.Q2S(sep)
+	i := bytes.IndexAny(pb[at:], ss)
 	if i < 0 {
 		return -1
 	}
@@ -119,25 +118,26 @@ func IndexAnyAt(p, sep []byte, at int) int {
 }
 
 // ToUpper is an alloc-free replacement of bytes.ToUpper() function.
-func ToUpper(p []byte) []byte { return Map(unicode.ToUpper, p) }
+func ToUpper[T byteseq.Byteseq](p T) T { return Map(unicode.ToUpper, p) }
 
 // ToLower is an alloc-free replacement of bytes.ToLower() function.
-func ToLower(p []byte) []byte { return Map(unicode.ToLower, p) }
+func ToLower[T byteseq.Byteseq](p T) T { return Map(unicode.ToLower, p) }
 
 // ToTitle is an alloc-free replacement of bytes.ToTitle() function.
-func ToTitle(p []byte) []byte { return Map(unicode.ToTitle, p) }
+func ToTitle[T byteseq.Byteseq](p T) T { return Map(unicode.ToTitle, p) }
 
 // Map returns modified p with all its characters modified according to the mapping function.
 //
 // See bytes.Map() function for details.
-func Map(mapping func(r rune) rune, p []byte) []byte {
+func Map[T byteseq.Byteseq](mapping func(r rune) rune, p T) T {
 	maxbytes := len(p)
 	nbytes := 0
+	pb := byteseq.Q2B(p)
 	for i := 0; i < len(p); {
 		wid := 1
 		r := rune(p[i])
 		if r >= utf8.RuneSelf {
-			r, wid = utf8.DecodeRune(p[i:])
+			r, wid = utf8.DecodeRune(pb[i:])
 		}
 		r = mapping(r)
 		if r >= 0 {
@@ -147,9 +147,9 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 			}
 			if nbytes+rl > maxbytes {
 				maxbytes = maxbytes*2 + utf8.UTFMax
-				p = Grow(p, maxbytes)
+				pb = Grow(pb, maxbytes)
 			}
-			nbytes += utf8.EncodeRune(p[nbytes:maxbytes], r)
+			nbytes += utf8.EncodeRune(pb[nbytes:maxbytes], r)
 		}
 		i += wid
 	}
@@ -157,8 +157,9 @@ func Map(mapping func(r rune) rune, p []byte) []byte {
 }
 
 // Copy makes a copy of byte array.
-func Copy(p []byte) []byte {
-	return append([]byte(nil), p...)
+func Copy[T byteseq.Byteseq](p T) T {
+	cpy := append([]byte(nil), p...)
+	return byteseq.B2Q[T](cpy)
 }
 
 // Grow increases length of the byte array.
