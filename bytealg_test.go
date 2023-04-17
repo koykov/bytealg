@@ -110,9 +110,9 @@ func BenchmarkBytealg(b *testing.B) {
 	b.Run("index byte at (lur)", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := IndexByteAtLR(idxAt, '#', 8)
+			r := IndexByteAtLUR(idxAt, '#', 8)
 			if r != idxExpect {
-				b.Error("IndexByteAtLR: mismatch result and expectation")
+				b.Error("IndexByteAtLUR: mismatch result and expectation")
 			}
 		}
 	})

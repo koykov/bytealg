@@ -1,13 +1,13 @@
 package bytealg
 
-// Loop rolling versions of several functions.
+// Loop unrolling versions of several functions.
 
-var _ = HasByteLR
+var _ = HasByteLUR
 
-// HasByteLR checks if p contains b.
+// HasByteLUR checks if p contains b.
 //
 // This function designed to use with the largest input.
-func HasByteLR(p []byte, b byte) bool {
+func HasByteLUR(p []byte, b byte) bool {
 	s := p
 	for len(s) >= 8 {
 		if s[0] == b {
@@ -68,8 +68,8 @@ func HasByteLR(p []byte, b byte) bool {
 	return false
 }
 
-// IndexByteAtLR is a loop rolling version of IndexAt().
-func IndexByteAtLR(p []byte, b byte, at int) int {
+// IndexByteAtLUR is a loop unrolling version of IndexAt().
+func IndexByteAtLUR(p []byte, b byte, at int) int {
 	if at < 0 || at >= len(p) {
 		return -1
 	}
