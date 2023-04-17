@@ -28,193 +28,134 @@ var (
 	cpyExpect = []byte("foobar")
 )
 
-func TestTrim(t *testing.T) {
-	r := Trim(trimOrigin, trimCut)
-	if !bytes.Equal(r, trimExpect) {
-		t.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
-	}
-}
-
-func BenchmarkTrim(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+func TestBytealg(t *testing.T) {
+	t.Run("trim", func(t *testing.T) {
 		r := Trim(trimOrigin, trimCut)
 		if !bytes.Equal(r, trimExpect) {
-			b.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
+			t.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
 		}
-	}
-}
-
-func BenchmarkTrim_Native(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := bytes.Trim(trimOrigin, trimCutStr)
-		if !bytes.Equal(r, trimExpect) {
-			b.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
-		}
-	}
-}
-
-func TestAppendSplit(t *testing.T) {
-	buf := make([][]byte, 0)
-	buf = AppendSplit(buf, splitOrigin, splitSep, -1)
-	if !EqualSet(buf, splitExpect) {
-		t.Error("AppendSplit: mismatch result and expectation")
-	}
-}
-
-func BenchmarkAppendSplit(b *testing.B) {
-	buf := make([][]byte, 0)
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		buf = buf[:0]
+	})
+	t.Run("append split", func(t *testing.T) {
+		buf := make([][]byte, 0)
 		buf = AppendSplit(buf, splitOrigin, splitSep, -1)
 		if !EqualSet(buf, splitExpect) {
-			b.Error("AppendSplit: mismatch result and expectation")
+			t.Error("AppendSplit: mismatch result and expectation")
 		}
-	}
-}
-
-func BenchmarkSplit_Native(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := bytes.Split(splitOrigin, splitSep)
-		if !EqualSet(r, splitExpect) {
-			b.Error("Split: mismatch result and expectation")
-		}
-	}
-}
-
-func TestIndexAt(t *testing.T) {
-	r := IndexAt(idxAt, []byte("#"), 8)
-	if r != idxExpect {
-		t.Error("IndexAt: mismatch result and expectation")
-	}
-}
-
-func BenchmarkIndexAt(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	})
+	t.Run("index at", func(t *testing.T) {
 		r := IndexAt(idxAt, []byte("#"), 8)
 		if r != idxExpect {
-			b.Error("IndexAt: mismatch result and expectation")
+			t.Error("IndexAt: mismatch result and expectation")
 		}
-	}
-}
-
-func BenchmarkIndexByteAtLR(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := IndexByteAtLR(idxAt, '#', 8)
-		if r != idxExpect {
-			b.Error("IndexByteAtLR: mismatch result and expectation")
+	})
+	t.Run("to lower", func(t *testing.T) {
+		cpy := Copy(toUpper)
+		r := ToLower(cpy)
+		if !bytes.Equal(r, toLower) {
+			t.Error("ToLower: mismatch result and expectation")
 		}
-	}
-}
-
-func TestToLower(t *testing.T) {
-	cpy := Copy(toUpper)
-	r := ToLower(cpy)
-	if !bytes.Equal(r, toLower) {
-		t.Error("ToLower: mismatch result and expectation")
-	}
-}
-
-func BenchmarkToLower(b *testing.B) {
-	buf := make([]byte, 0, len(cpyOrigin))
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		buf = append(buf[:0], cpyOrigin...)
-		r := ToLower(buf)
-		if !bytes.Equal(r, cpyExpect) {
-			b.Error("ToLower: mismatch result and expectation")
-		}
-	}
-}
-
-func BenchmarkToLower_Native(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := bytes.ToLower(cpyOrigin)
-		if !bytes.Equal(r, cpyExpect) {
-			b.Error("ToLower: mismatch result and expectation")
-		}
-	}
-}
-
-func TestToUpper(t *testing.T) {
-	cpy := Copy(toLower)
-	r := ToUpper(cpy)
-	if !bytes.Equal(r, toUpper) {
-		t.Error("ToUpper: mismatch result and expectation")
-	}
-}
-
-func BenchmarkToUpper(b *testing.B) {
-	buf := make([]byte, 0, len(toLower))
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		buf = append(buf[:0], toLower...)
-		r := ToUpper(buf)
+	})
+	t.Run("to upper", func(t *testing.T) {
+		cpy := Copy(toLower)
+		r := ToUpper(cpy)
 		if !bytes.Equal(r, toUpper) {
-			b.Error("ToUpper: mismatch result and expectation")
+			t.Error("ToUpper: mismatch result and expectation")
 		}
-	}
-}
-
-func BenchmarkToUpper_Native(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := bytes.ToUpper(toLower)
-		if !bytes.Equal(r, toUpper) {
-			b.Error("ToUpper: mismatch result and expectation")
-		}
-	}
-}
-
-func TestToTitle(t *testing.T) {
-	cpy := Copy(toLower)
-	r := ToTitle(cpy)
-	if !bytes.Equal(r, toTitle) {
-		t.Error("ToTitle: mismatch result and expectation")
-	}
-}
-
-func BenchmarkToTitle(b *testing.B) {
-	buf := make([]byte, 0, len(toLower))
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		buf = append(buf[:0], toLower...)
-		r := ToTitle(buf)
+	})
+	t.Run("to title", func(t *testing.T) {
+		cpy := Copy(toLower)
+		r := ToTitle(cpy)
 		if !bytes.Equal(r, toTitle) {
-			b.Error("ToTitle: mismatch result and expectation")
+			t.Error("ToTitle: mismatch result and expectation")
 		}
-	}
-}
-
-func BenchmarkToTitle_Native(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		r := bytes.ToTitle(toLower)
-		if !bytes.Equal(r, toTitle) {
-			b.Error("ToTitle: mismatch result and expectation")
-		}
-	}
-}
-
-func TestCopy(t *testing.T) {
-	r := Copy(cpyOrigin)
-	if !bytes.Equal(r, cpyExpect) {
-		t.Error("Copy: mismatch result and expectation")
-	}
-}
-
-func BenchmarkCopy(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	})
+	t.Run("copy", func(t *testing.T) {
 		r := Copy(cpyOrigin)
 		if !bytes.Equal(r, cpyExpect) {
-			b.Error("Copy: mismatch result and expectation")
+			t.Error("Copy: mismatch result and expectation")
 		}
-	}
+	})
+}
+
+func BenchmarkBytealg(b *testing.B) {
+	b.Run("trim", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r := Trim(trimOrigin, trimCut)
+			if !bytes.Equal(r, trimExpect) {
+				b.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
+			}
+		}
+	})
+	b.Run("append split", func(b *testing.B) {
+		b.ReportAllocs()
+		buf := make([][]byte, 0)
+		for i := 0; i < b.N; i++ {
+			buf = buf[:0]
+			buf = AppendSplit(buf, splitOrigin, splitSep, -1)
+			if !EqualSet(buf, splitExpect) {
+				b.Error("AppendSplit: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("index at", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r := IndexAt(idxAt, []byte("#"), 8)
+			if r != idxExpect {
+				b.Error("IndexAt: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("index byte at (lur)", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r := IndexByteAtLR(idxAt, '#', 8)
+			if r != idxExpect {
+				b.Error("IndexByteAtLR: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("to lower", func(b *testing.B) {
+		b.ReportAllocs()
+		buf := make([]byte, 0, len(cpyOrigin))
+		for i := 0; i < b.N; i++ {
+			buf = append(buf[:0], cpyOrigin...)
+			r := ToLower(buf)
+			if !bytes.Equal(r, cpyExpect) {
+				b.Error("ToLower: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("to upper", func(b *testing.B) {
+		b.ReportAllocs()
+		buf := make([]byte, 0, len(toLower))
+		for i := 0; i < b.N; i++ {
+			buf = append(buf[:0], toLower...)
+			r := ToUpper(buf)
+			if !bytes.Equal(r, toUpper) {
+				b.Error("ToUpper: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("to title", func(b *testing.B) {
+		b.ReportAllocs()
+		buf := make([]byte, 0, len(toLower))
+		for i := 0; i < b.N; i++ {
+			buf = append(buf[:0], toLower...)
+			r := ToTitle(buf)
+			if !bytes.Equal(r, toTitle) {
+				b.Error("ToTitle: mismatch result and expectation")
+			}
+		}
+	})
+	b.Run("copy", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r := Copy(cpyOrigin)
+			if !bytes.Equal(r, cpyExpect) {
+				b.Error("Copy: mismatch result and expectation")
+			}
+		}
+	})
 }
