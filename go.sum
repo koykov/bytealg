@@ -1,2 +1,4 @@
-github.com/koykov/fastconv v1.0.0 h1:WnsCYcrrQkUWEKK4VbVX7BuGb6jFhE8Q0Ebl3eAkHic=
-github.com/koykov/fastconv v1.0.0/go.mod h1:Y7I12pumAx+2iH1Yh0X85UpywP7IET/+M7S17toJBes=
+github.com/koykov/byteseq v0.0.0-20230330194259-68973f3b765a h1:2q77e/w+8RE5VwIaR2KwcF4f+PqEemrgOiRA/xhM7S4=
+github.com/koykov/byteseq v0.0.0-20230330194259-68973f3b765a/go.mod h1:JlIJ6P3/ocuGNRbTVyP0NVRS/ExofhOS8g7mtefjefw=
+github.com/koykov/fastconv v1.0.2 h1:csOWpctD9OcpkfI07LEtqtolc4TT8Y6QG3zQvkTmhrQ=
+github.com/koykov/fastconv v1.0.2/go.mod h1:9jOx5KRGe4UKHxGiDw5Yrp/qrqn2cRwH3xvFjqqCE3c=
