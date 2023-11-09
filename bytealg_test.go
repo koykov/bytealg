@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/koykov/fastconv"
+	"github.com/koykov/byteconv"
 )
 
 var (
@@ -32,7 +32,7 @@ func TestBytealg(t *testing.T) {
 	t.Run("trim", func(t *testing.T) {
 		r := Trim(trimOrigin, trimCut)
 		if !bytes.Equal(r, trimExpect) {
-			t.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
+			t.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpect))
 		}
 	})
 	t.Run("append split", func(t *testing.T) {
@@ -83,7 +83,7 @@ func BenchmarkBytealg(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			r := Trim(trimOrigin, trimCut)
 			if !bytes.Equal(r, trimExpect) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, fastconv.B2S(r), fastconv.B2S(trimExpect))
+				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpect))
 			}
 		}
 	})
