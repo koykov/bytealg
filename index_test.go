@@ -72,12 +72,38 @@ var indexTC = []tc{
 	{"000000000000000000000000000000000000000000000000000000000000000000000001", "0000000000000000000000000000000000000000000000000000000000000000001", 5},
 }
 
-func BenchmarkIndexNative(b *testing.B) {
+func BenchmarkHasByte(b *testing.B) {
 	for _, tc_ := range indexTC {
 		if len(tc_.b) > 1 || len(tc_.b) == 0 {
 			continue
 		}
-		b.Run(fmt.Sprintf("IndexByte (vanilla): %s__%s", tc_.a, tc_.b), func(b *testing.B) {
+		b.Run(fmt.Sprintf("vanilla/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				x := bytes.IndexByte([]byte(tc_.a), tc_.b[0]) != -1
+				if (tc_.i == -1 && x) || (tc_.i >= 0 && !x) {
+					b.FailNow()
+				}
+			}
+		})
+		b.Run(fmt.Sprintf("lur/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				x := HasByteLUR([]byte(tc_.a), tc_.b[0])
+				if (tc_.i == -1 && x) || (tc_.i >= 0 && !x) {
+					b.FailNow()
+				}
+			}
+		})
+	}
+}
+
+func BenchmarkIndexByte(b *testing.B) {
+	for _, tc_ := range indexTC {
+		if len(tc_.b) > 1 || len(tc_.b) == 0 {
+			continue
+		}
+		b.Run(fmt.Sprintf("vanilla/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
 				x := bytes.IndexByte([]byte(tc_.a), tc_.b[0])
@@ -86,7 +112,7 @@ func BenchmarkIndexNative(b *testing.B) {
 				}
 			}
 		})
-		b.Run(fmt.Sprintf("IndexByte (lur): %s__%s", tc_.a, tc_.b), func(b *testing.B) {
+		b.Run(fmt.Sprintf("lur/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
 				x := IndexByteAtLUR([]byte(tc_.a), tc_.b[0], 0)
