@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/koykov/byteconv"
+	"github.com/koykov/entry"
 )
 
 var (
@@ -40,6 +41,17 @@ func TestBytealg(t *testing.T) {
 		buf = AppendSplit(buf, splitOrigin, splitSep, -1)
 		if !EqualSet(buf, splitExpect) {
 			t.Error("AppendSplit: mismatch result and expectation")
+		}
+	})
+	t.Run("append split entry", func(t *testing.T) {
+		buf := make([]entry.Entry64, 0)
+		buf = AppendSplitEntry(buf, splitOrigin, splitSep, -1)
+		for i := 0; i < len(buf); i++ {
+			lo, hi := buf[i].Decode()
+			if !bytes.Equal(splitOrigin[lo:hi], splitExpect[i]) {
+				t.Error("AppendSplit: mismatch result and expectation")
+				break
+			}
 		}
 	})
 	t.Run("index at", func(t *testing.T) {
@@ -97,6 +109,15 @@ func BenchmarkBytealg(b *testing.B) {
 				b.Error("AppendSplit: mismatch result and expectation")
 			}
 		}
+	})
+	b.Run("append split entry", func(b *testing.B) {
+		b.ReportAllocs()
+		buf := make([]entry.Entry64, 0)
+		for i := 0; i < b.N; i++ {
+			buf = buf[:0]
+			buf = AppendSplitEntry(buf, splitOrigin, splitSep, -1)
+		}
+		_ = buf
 	})
 	b.Run("index at", func(b *testing.B) {
 		b.ReportAllocs()
