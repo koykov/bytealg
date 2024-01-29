@@ -75,11 +75,8 @@ func AppendSplit[T byteseq.Byteseq](buf []T, s, sep T, n int) []T {
 		return buf
 	}
 	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
-	if n < 0 {
-		n = bytes.Count(sb, pb) + 1
-	}
-	i := 0
-	for i < n {
+	var i int
+	for {
 		m := bytes.Index(sb, pb)
 		if m < 0 {
 			break
@@ -87,6 +84,9 @@ func AppendSplit[T byteseq.Byteseq](buf []T, s, sep T, n int) []T {
 		buf = append(buf, byteseq.B2Q[T](sb[:m:m]))
 		sb = sb[m+len(sep):]
 		i++
+		if n >= 0 && i >= n {
+			break
+		}
 	}
 	buf = append(buf, byteseq.B2Q[T](sb))
 	return buf[:i+1]
@@ -100,12 +100,9 @@ func AppendSplitEntry[T byteseq.Byteseq](buf []entry.Entry64, s, sep T, n int) [
 		return buf
 	}
 	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
-	if n < 0 {
-		n = bytes.Count(sb, pb) + 1
-	}
 	var off int
-	i := 0
-	for i < n {
+	var i int
+	for {
 		m := bytes.Index(sb, pb)
 		if m < 0 {
 			break
@@ -116,6 +113,9 @@ func AppendSplitEntry[T byteseq.Byteseq](buf []entry.Entry64, s, sep T, n int) [
 		sb = sb[m+len(sep):]
 		off += m + len(sep)
 		i++
+		if n >= 0 && i >= n {
+			break
+		}
 	}
 	var e entry.Entry64
 	e.Encode(uint32(off), uint32(off+len(sb)))
