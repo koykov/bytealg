@@ -8,6 +8,7 @@ import (
 	"unsafe"
 
 	"github.com/koykov/byteseq"
+	"github.com/koykov/entry"
 )
 
 const (
@@ -88,6 +89,37 @@ func AppendSplit[T byteseq.Byteseq](buf []T, s, sep T, n int) []T {
 		i++
 	}
 	buf = append(buf, byteseq.B2Q[T](sb))
+	return buf[:i+1]
+}
+
+// AppendSplitEntry splits s to buf using sep as separator.
+//
+// buf contains entry.Entry64 records instead of substrings.
+func AppendSplitEntry[T byteseq.Byteseq](buf []entry.Entry64, s, sep T, n int) []entry.Entry64 {
+	if len(s) == 0 {
+		return buf
+	}
+	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
+	if n < 0 {
+		n = bytes.Count(sb, pb) + 1
+	}
+	var off int
+	i := 0
+	for i < n {
+		m := bytes.Index(sb, pb)
+		if m < 0 {
+			break
+		}
+		var e entry.Entry64
+		e.Encode(uint32(off), uint32(off+m))
+		buf = append(buf, e)
+		sb = sb[m+len(sep):]
+		off += m + len(sep)
+		i++
+	}
+	var e entry.Entry64
+	e.Encode(uint32(off), uint32(off+len(sb)))
+	buf = append(buf, e)
 	return buf[:i+1]
 }
 
