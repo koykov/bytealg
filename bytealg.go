@@ -123,32 +123,6 @@ func AppendSplitEntry[T byteseq.Byteseq](buf []entry.Entry64, s, sep T, n int) [
 	return buf[:i+1]
 }
 
-// IndexAt is equal to bytes.Index() but doesn't consider occurrences of sep in p[:at].
-func IndexAt[T byteseq.Byteseq](p, sep T, at int) int {
-	if at < 0 || at >= len(p) {
-		return -1
-	}
-	pb, sb := byteseq.Q2B(p), byteseq.Q2B(sep)
-	i := bytes.Index(pb[at:], sb)
-	if i < 0 {
-		return -1
-	}
-	return i + at
-}
-
-// IndexAnyAt is equal to bytes.IndexAny() but doesn't consider occurrences of sep in p[:at].
-func IndexAnyAt[T byteseq.Byteseq](p, sep T, at int) int {
-	if at < 0 || at >= len(p) {
-		return -1
-	}
-	pb, ss := byteseq.Q2B(p), byteseq.Q2S(sep)
-	i := bytes.IndexAny(pb[at:], ss)
-	if i < 0 {
-		return -1
-	}
-	return i + at
-}
-
 // ToUpper is an alloc-free replacement of bytes.ToUpper() function.
 func ToUpper[T byteseq.Byteseq](p T) T { return Map(unicode.ToUpper, p) }
 
