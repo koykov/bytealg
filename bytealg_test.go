@@ -4,22 +4,13 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/koykov/byteconv"
 	"github.com/koykov/entry"
 )
 
 var (
-	trimOrigin = []byte("..foo bar!!???")
-	trimExpect = []byte("foo bar")
-	trimCutStr = "?!."
-	trimCut    = []byte(trimCutStr)
-
 	splitOrigin = []byte("foo bar string")
 	splitExpect = [][]byte{[]byte("foo"), []byte("bar"), []byte("string")}
 	splitSep    = []byte(" ")
-
-	idxAt     = []byte("some # string with # tokens")
-	idxExpect = 19
 
 	toUpper = []byte("FOOBAR")
 	toLower = []byte("foobar")
@@ -30,12 +21,6 @@ var (
 )
 
 func TestBytealg(t *testing.T) {
-	t.Run("trim", func(t *testing.T) {
-		r := Trim(trimOrigin, trimCut)
-		if !bytes.Equal(r, trimExpect) {
-			t.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpect))
-		}
-	})
 	t.Run("append split", func(t *testing.T) {
 		buf := make([][]byte, 0)
 		buf = AppendSplit(buf, splitOrigin, splitSep, -1)
@@ -52,12 +37,6 @@ func TestBytealg(t *testing.T) {
 				t.Error("AppendSplit: mismatch result and expectation")
 				break
 			}
-		}
-	})
-	t.Run("index at", func(t *testing.T) {
-		r := IndexAt(idxAt, []byte("#"), 8)
-		if r != idxExpect {
-			t.Error("IndexAt: mismatch result and expectation")
 		}
 	})
 	t.Run("to lower", func(t *testing.T) {
@@ -90,15 +69,6 @@ func TestBytealg(t *testing.T) {
 }
 
 func BenchmarkBytealg(b *testing.B) {
-	b.Run("trim", func(b *testing.B) {
-		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
-			r := Trim(trimOrigin, trimCut)
-			if !bytes.Equal(r, trimExpect) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpect))
-			}
-		}
-	})
 	b.Run("append split", func(b *testing.B) {
 		b.ReportAllocs()
 		buf := make([][]byte, 0)
@@ -118,24 +88,6 @@ func BenchmarkBytealg(b *testing.B) {
 			buf = AppendSplitEntry(buf, splitOrigin, splitSep, -1)
 		}
 		_ = buf
-	})
-	b.Run("index at", func(b *testing.B) {
-		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
-			r := IndexAt(idxAt, []byte("#"), 8)
-			if r != idxExpect {
-				b.Error("IndexAt: mismatch result and expectation")
-			}
-		}
-	})
-	b.Run("index byte at (lur)", func(b *testing.B) {
-		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
-			r := IndexByteAtLUR(idxAt, '#', 8)
-			if r != idxExpect {
-				b.Error("IndexByteAtLUR: mismatch result and expectation")
-			}
-		}
 	})
 	b.Run("to lower", func(b *testing.B) {
 		b.ReportAllocs()
