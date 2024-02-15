@@ -87,7 +87,7 @@ func TestIndex(t *testing.T) {
 }
 
 func BenchmarkIndex(b *testing.B) {
-	b.Run("index at", func(b *testing.B) {
+	b.Run("generic/index at", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := IndexAt(idxAt, []byte("#"), 8)
@@ -96,7 +96,7 @@ func BenchmarkIndex(b *testing.B) {
 			}
 		}
 	})
-	b.Run("index byte at (lur)", func(b *testing.B) {
+	b.Run("generic/index byte at (lur)", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := IndexByteAtLUR(idxAt, '#', 8)

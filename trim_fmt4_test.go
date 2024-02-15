@@ -34,19 +34,19 @@ func TestTrimFmt4(t *testing.T) {
 		}
 	})
 	t.Run("bytes/trim", func(t *testing.T) {
-		r := TrimBytesFmt4(trimOriginFmt4)
+		r := TrimFmt4(trimOriginFmt4)
 		if !bytes.Equal(r, trimExpectFmt4) {
 			t.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpectFmt4))
 		}
 	})
 	t.Run("bytes/ltrim", func(t *testing.T) {
-		r := TrimLeftBytesFmt4(trimOriginFmt4)
+		r := TrimLeftFmt4(trimOriginFmt4)
 		if !bytes.Equal(r, ltrimExpectFmt4) {
 			t.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(ltrimExpectFmt4))
 		}
 	})
 	t.Run("bytes/rtrim", func(t *testing.T) {
-		r := TrimRightBytesFmt4(trimOriginFmt4)
+		r := TrimRightFmt4(trimOriginFmt4)
 		if !bytes.Equal(r, rtrimExpectFmt4) {
 			t.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(rtrimExpectFmt4))
 		}
@@ -84,7 +84,7 @@ func BenchmarkTrimFmt4(b *testing.B) {
 	b.Run("bytes/trim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := TrimBytesFmt4(trimOriginFmt4)
+			r := TrimFmt4(trimOriginFmt4)
 			if !bytes.Equal(r, trimExpectFmt4) {
 				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpectFmt4))
 			}
@@ -93,7 +93,7 @@ func BenchmarkTrimFmt4(b *testing.B) {
 	b.Run("bytes/ltrim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := TrimLeftBytesFmt4(trimOriginFmt4)
+			r := TrimLeftFmt4(trimOriginFmt4)
 			if !bytes.Equal(r, ltrimExpectFmt4) {
 				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(ltrimExpectFmt4))
 			}
@@ -102,7 +102,7 @@ func BenchmarkTrimFmt4(b *testing.B) {
 	b.Run("bytes/rtrim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := TrimRightBytesFmt4(trimOriginFmt4)
+			r := TrimRightFmt4(trimOriginFmt4)
 			if !bytes.Equal(r, rtrimExpectFmt4) {
 				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(rtrimExpectFmt4))
 			}

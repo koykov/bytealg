@@ -1,11 +1,5 @@
 package bytealg
 
-import (
-	"bytes"
-
-	"github.com/koykov/byteseq"
-)
-
 const (
 	// Trim directions.
 	trimBoth  = 0
@@ -13,38 +7,99 @@ const (
 	trimRight = 2
 )
 
+// group: bytes versions
+
 // Trim makes fast and alloc-free trim.
-func Trim[T byteseq.Byteseq](p, cut T) T {
+func Trim(p, cut []byte) []byte {
 	return trim(p, cut, trimBoth)
 }
 
-func TrimLeft[T byteseq.Byteseq](p, cut T) T {
+func TrimLeft(p, cut []byte) []byte {
 	return trim(p, cut, trimLeft)
 }
 
-func TrimRight[T byteseq.Byteseq](p, cut T) T {
+func TrimRight(p, cut []byte) []byte {
 	return trim(p, cut, trimRight)
 }
 
 // Generic trim.
 //
 // Just calculates trim edges and return sub-slice.
-func trim[T byteseq.Byteseq](p, cut T, dir int) T {
+func trim(p, cut []byte, dir int) []byte {
 	l, r := 0, len(p)-1
-	pb, cb := byteseq.Q2B(p), byteseq.Q2B(cut)
 	if dir == trimBoth || dir == trimLeft {
-		for ; l < len(pb); l++ {
-			if !bytes.Contains(cb, []byte{pb[l]}) {
+		for ; l <= r; l++ {
+			var brk bool
+			for j := 0; j < len(cut); j++ {
+				if brk = p[l] == cut[j]; brk {
+					break
+				}
+			}
+			if !brk {
 				break
 			}
 		}
 	}
 	if dir == trimBoth || dir == trimRight {
 		for ; r >= l; r-- {
-			if !bytes.Contains(cb, []byte{pb[r]}) {
+			var brk bool
+			for j := 0; j < len(cut); j++ {
+				if brk = p[r] == cut[j]; brk {
+					break
+				}
+			}
+			if !brk {
 				break
 			}
 		}
 	}
-	return byteseq.B2Q[T](pb[l : r+1])
+	return p[l : r+1]
 }
+
+// group: string versions
+
+// TrimString makes fast and alloc-free trim over string.
+func TrimString(p, cut string) string {
+	return strim(p, cut, trimBoth)
+}
+
+func TrimLeftString(p, cut string) string {
+	return strim(p, cut, trimLeft)
+}
+
+func TrimRightString(p, cut string) string {
+	return strim(p, cut, trimRight)
+}
+
+func strim(p, cut string, dir int) string {
+	l, r := 0, len(p)-1
+	if dir == trimBoth || dir == trimLeft {
+		for ; l <= r; l++ {
+			var brk bool
+			for j := 0; j < len(cut); j++ {
+				if brk = p[l] == cut[j]; brk {
+					break
+				}
+			}
+			if !brk {
+				break
+			}
+		}
+	}
+	if dir == trimBoth || dir == trimRight {
+		for ; r >= l; r-- {
+			var brk bool
+			for j := 0; j < len(cut); j++ {
+				if brk = p[r] == cut[j]; brk {
+					break
+				}
+			}
+			if !brk {
+				break
+			}
+		}
+	}
+	return p[l : r+1]
+}
+
+var _, _, _ = TrimString, TrimLeftString, TrimRightString
