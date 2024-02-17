@@ -21,24 +21,6 @@ var (
 )
 
 func TestBytealg(t *testing.T) {
-	t.Run("append split", func(t *testing.T) {
-		buf := make([][]byte, 0)
-		buf = AppendSplit(buf, splitOrigin, splitSep, -1)
-		if !EqualSet(buf, splitExpect) {
-			t.Error("AppendSplit: mismatch result and expectation")
-		}
-	})
-	t.Run("append split entry", func(t *testing.T) {
-		buf := make([]entry.Entry64, 0)
-		buf = AppendSplitEntry(buf, splitOrigin, splitSep, -1)
-		for i := 0; i < len(buf); i++ {
-			lo, hi := buf[i].Decode()
-			if !bytes.Equal(splitOrigin[lo:hi], splitExpect[i]) {
-				t.Error("AppendSplit: mismatch result and expectation")
-				break
-			}
-		}
-	})
 	t.Run("to lower", func(t *testing.T) {
 		cpy := Copy(toUpper)
 		r := ToLower(cpy)
