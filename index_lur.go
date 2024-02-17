@@ -68,7 +68,7 @@ func HasByteLUR(p []byte, b byte) bool {
 	return false
 }
 
-// IndexByteAtLUR is a loop unrolling version of IndexAt().
+// IndexByteAtLUR is a loop unrolling version of IndexAtBytes().
 func IndexByteAtLUR(p []byte, b byte, at int) int {
 	if at < 0 || at >= len(p) {
 		return -1
