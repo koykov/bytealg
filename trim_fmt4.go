@@ -1,5 +1,11 @@
 package bytealg
 
+import (
+	"unsafe"
+
+	"github.com/koykov/byteseq"
+)
+
 const (
 	bfmt4space = ' '
 	bfmt4tab   = '\t'
@@ -7,20 +13,50 @@ const (
 	bfmt4cr    = '\r'
 )
 
+// group: generic versions
+
+// TrimFmt4 removes default formatting bytes from both side of x.
+func TrimFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimBoth)
+}
+
+// TrimLeftFmt4 is a left version of TrimFmt4.
+func TrimLeftFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimLeft)
+}
+
+// TrimRightFmt4 is a right version of TrimFmt4.
+func TrimRightFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimRight)
+}
+
+// Generic trimFmt4.
+func trimFmt4[T byteseq.Q](x T, dir int) T {
+	if p, ok := byteseq.ToBytes(x); ok {
+		r := btrimFmt4(p, dir)
+		return *(*T)(unsafe.Pointer(&r))
+	}
+	if s, ok := byteseq.ToString(x); ok {
+		r := strimFmt4(s, dir)
+		return *(*T)(unsafe.Pointer(&r))
+	}
+	return x
+}
+
 // group: bytes versions
 
-// TrimFmt4 removes default formatting bytes from both side of p.
-func TrimFmt4(p []byte) []byte {
+// TrimBytesFmt4 removes default formatting bytes from both side of p.
+func TrimBytesFmt4(p []byte) []byte {
 	return btrimFmt4(p, trimBoth)
 }
 
-// TrimLeftFmt4 removes default formatting bytes from left size of p.
-func TrimLeftFmt4(p []byte) []byte {
+// TrimLeftBytesFmt4 removes default formatting bytes from left size of p.
+func TrimLeftBytesFmt4(p []byte) []byte {
 	return btrimFmt4(p, trimLeft)
 }
 
-// TrimRightFmt4 removes default formatting bytes from right size of p.
-func TrimRightFmt4(p []byte) []byte {
+// TrimRightBytesFmt4 removes default formatting bytes from right size of p.
+func TrimRightBytesFmt4(p []byte) []byte {
 	return btrimFmt4(p, trimRight)
 }
 

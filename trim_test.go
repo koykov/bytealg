@@ -24,13 +24,26 @@ func TestTrim(t *testing.T) {
 }
 
 func BenchmarkTrim(b *testing.B) {
-	b.Run("left right", func(b *testing.B) {
+	b.Run("generic", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := Trim(trimOrigin, trimCut)
-			if !bytes.Equal(r, trimExpect) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpect))
-			}
+			_ = r
+		}
+	})
+	b.Run("bytes", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r := TrimBytes(trimOrigin, trimCut)
+			_ = r
+		}
+	})
+	b.Run("string", func(b *testing.B) {
+		b.ReportAllocs()
+		so := string(trimOrigin)
+		for i := 0; i < b.N; i++ {
+			r := TrimString(so, trimCutStr)
+			_ = r
 		}
 	})
 }
