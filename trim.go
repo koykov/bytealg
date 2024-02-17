@@ -51,13 +51,13 @@ func TrimBytes(p, cut []byte) []byte {
 	return btrim(p, cut, trimBoth)
 }
 
-// TrimBytesLeft is a left version of TrimBytes.
-func TrimBytesLeft(p, cut []byte) []byte {
+// TrimLeftBytes is a left version of TrimBytes.
+func TrimLeftBytes(p, cut []byte) []byte {
 	return btrim(p, cut, trimLeft)
 }
 
-// TrimBytesRight is a right version of TrimBytes.
-func TrimBytesRight(p, cut []byte) []byte {
+// TrimRightBytes is a right version of TrimBytes.
+func TrimRightBytes(p, cut []byte) []byte {
 	return btrim(p, cut, trimRight)
 }
 
@@ -94,6 +94,8 @@ func btrim(p, cut []byte, dir int) []byte {
 	}
 	return p[l : r+1]
 }
+
+var _, _ = TrimLeftBytes, TrimRightBytes
 
 // group: string versions
 

@@ -38,12 +38,4 @@ func BenchmarkTrim(b *testing.B) {
 			_ = r
 		}
 	})
-	b.Run("string", func(b *testing.B) {
-		b.ReportAllocs()
-		so := string(trimOrigin)
-		for i := 0; i < b.N; i++ {
-			r := TrimString(so, trimCutStr)
-			_ = r
-		}
-	})
 }
