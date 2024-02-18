@@ -8,7 +8,6 @@ import (
 	"unsafe"
 
 	"github.com/koykov/byteseq"
-	"github.com/koykov/entry"
 )
 
 // EqualSet checks if two slices of bytes slices is equal.
@@ -22,62 +21,6 @@ func EqualSet[T byteseq.Byteseq](a, b []T) bool {
 		}
 	}
 	return true
-}
-
-// AppendSplit splits s to buf using sep as separator.
-//
-// This function if an alloc-free replacement of bytes.Split() function.
-func AppendSplit[T byteseq.Byteseq](buf []T, s, sep T, n int) []T {
-	if len(s) == 0 {
-		return buf
-	}
-	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
-	var i int
-	for {
-		m := bytes.Index(sb, pb)
-		if m < 0 {
-			break
-		}
-		buf = append(buf, byteseq.B2Q[T](sb[:m:m]))
-		sb = sb[m+len(sep):]
-		i++
-		if n >= 0 && i >= n {
-			break
-		}
-	}
-	buf = append(buf, byteseq.B2Q[T](sb))
-	return buf[:i+1]
-}
-
-// AppendSplitEntry splits s to buf using sep as separator.
-//
-// buf contains entry.Entry64 records instead of substrings.
-func AppendSplitEntry[T byteseq.Byteseq](buf []entry.Entry64, s, sep T, n int) []entry.Entry64 {
-	if len(s) == 0 {
-		return buf
-	}
-	sb, pb := byteseq.Q2B(s), byteseq.Q2B(sep)
-	var off int
-	var i int
-	for {
-		m := bytes.Index(sb, pb)
-		if m < 0 {
-			break
-		}
-		var e entry.Entry64
-		e.Encode(uint32(off), uint32(off+m))
-		buf = append(buf, e)
-		sb = sb[m+len(sep):]
-		off += m + len(sep)
-		i++
-		if n >= 0 && i >= n {
-			break
-		}
-	}
-	var e entry.Entry64
-	e.Encode(uint32(off), uint32(off+len(sb)))
-	buf = append(buf, e)
-	return buf[:i+1]
 }
 
 // ToUpper is an alloc-free replacement of bytes.ToUpper() function.

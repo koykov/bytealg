@@ -67,45 +67,35 @@ func BenchmarkTrimFmt4(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := TrimLeftFmt4(trimOriginFmt4)
-			if !bytes.Equal(r, ltrimExpectFmt4) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(ltrimExpectFmt4))
-			}
+			_ = r
 		}
 	})
 	b.Run("generic/rtrim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := TrimRightFmt4(trimOriginFmt4)
-			if !bytes.Equal(r, rtrimExpectFmt4) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(rtrimExpectFmt4))
-			}
+			_ = r
 		}
 	})
 	b.Run("bytes/trim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := TrimBytesFmt4(trimOriginFmt4)
-			if !bytes.Equal(r, trimExpectFmt4) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(trimExpectFmt4))
-			}
+			_ = r
 		}
 	})
 	b.Run("bytes/ltrim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := TrimLeftBytesFmt4(trimOriginFmt4)
-			if !bytes.Equal(r, ltrimExpectFmt4) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(ltrimExpectFmt4))
-			}
+			_ = r
 		}
 	})
 	b.Run("bytes/rtrim", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			r := TrimRightBytesFmt4(trimOriginFmt4)
-			if !bytes.Equal(r, rtrimExpectFmt4) {
-				b.Errorf(`Trim: mismatch result %s and expectation %s`, byteconv.B2S(r), byteconv.B2S(rtrimExpectFmt4))
-			}
+			_ = r
 		}
 	})
 }

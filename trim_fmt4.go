@@ -1,7 +1,7 @@
 package bytealg
 
 import (
-	"bytes"
+	"unsafe"
 
 	"github.com/koykov/byteseq"
 )
@@ -13,45 +13,34 @@ const (
 	bfmt4cr    = '\r'
 )
 
-// Default formatting bytes: space, tab, new line and caret return.
-var bfmt4 = []byte{bfmt4space, bfmt4tab, bfmt4nl, bfmt4cr}
-
 // group: generic versions
 
-// TrimFmt4 removes default formatting bytes from both side of p.
-func TrimFmt4[T byteseq.Byteseq](p T) T {
-	return trimFmt4(p, trimBoth)
+// TrimFmt4 removes default formatting bytes from both side of x.
+func TrimFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimBoth)
 }
 
-// TrimLeftFmt4 removes default formatting bytes from left size of p.
-func TrimLeftFmt4[T byteseq.Byteseq](p T) T {
-	return trimFmt4(p, trimLeft)
+// TrimLeftFmt4 is a left version of TrimFmt4.
+func TrimLeftFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimLeft)
 }
 
-// TrimRightFmt4 removes default formatting bytes from right size of p.
-func TrimRightFmt4[T byteseq.Byteseq](p T) T {
-	return trimFmt4(p, trimRight)
+// TrimRightFmt4 is a right version of TrimFmt4.
+func TrimRightFmt4[T byteseq.Q](x T) T {
+	return trimFmt4(x, trimRight)
 }
 
 // Generic trimFmt4.
-func trimFmt4[T byteseq.Byteseq](p T, dir int) T {
-	l, r := 0, len(p)-1
-	pb := byteseq.Q2B(p)
-	if dir == trimBoth || dir == trimLeft {
-		for ; l < len(pb); l++ {
-			if !bytes.Contains(bfmt4, []byte{pb[l]}) {
-				break
-			}
-		}
+func trimFmt4[T byteseq.Q](x T, dir int) T {
+	if p, ok := byteseq.ToBytes(x); ok {
+		r := btrimFmt4(p, dir)
+		return *(*T)(unsafe.Pointer(&r))
 	}
-	if dir == trimBoth || dir == trimRight {
-		for ; r >= l; r-- {
-			if !bytes.Contains(bfmt4, []byte{pb[r]}) {
-				break
-			}
-		}
+	if s, ok := byteseq.ToString(x); ok {
+		r := strimFmt4(s, dir)
+		return *(*T)(unsafe.Pointer(&r))
 	}
-	return byteseq.B2Q[T](pb[l : r+1])
+	return x
 }
 
 // group: bytes versions
@@ -131,3 +120,5 @@ func strimFmt4(p string, dir int) string {
 	}
 	return p[l : r+1]
 }
+
+var _, _, _ = TrimStringFmt4, TrimLeftStringFmt4, TrimRightStringFmt4

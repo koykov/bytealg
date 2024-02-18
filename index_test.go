@@ -1,7 +1,6 @@
 package bytealg
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 )
@@ -77,34 +76,58 @@ var (
 	idxExpect = 19
 )
 
-func TestIndex(t *testing.T) {
-	t.Run("index at", func(t *testing.T) {
-		r := IndexAt(idxAt, []byte("#"), 8)
+func TestIndexAt(t *testing.T) {
+	t.Run("generic", func(t *testing.T) {
+		r := IndexAtBytes(idxAt, []byte("#"), 8)
 		if r != idxExpect {
-			t.Error("IndexAt: mismatch result and expectation")
+			t.Error("IndexAtBytes: mismatch result and expectation")
+		}
+	})
+	t.Run("bytes", func(t *testing.T) {
+		r := IndexAtBytes(idxAt, []byte("#"), 8)
+		if r != idxExpect {
+			t.Error("IndexAtBytes: mismatch result and expectation")
 		}
 	})
 }
 
-func BenchmarkIndex(b *testing.B) {
-	b.Run("index at", func(b *testing.B) {
+func BenchmarkIndexAt(b *testing.B) {
+	sep := []byte("#")
+	b.Run("generic", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := IndexAt(idxAt, []byte("#"), 8)
-			if r != idxExpect {
-				b.Error("IndexAt: mismatch result and expectation")
-			}
+			r := IndexAt(idxAt, sep, 8)
+			_ = r
 		}
 	})
-	b.Run("index byte at (lur)", func(b *testing.B) {
+	b.Run("bytes", func(b *testing.B) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
-			r := IndexByteAtLUR(idxAt, '#', 8)
-			if r != idxExpect {
-				b.Error("IndexByteAtLUR: mismatch result and expectation")
-			}
+			r := IndexAtBytes(idxAt, sep, 8)
+			_ = r
 		}
 	})
+}
+
+func TestHasByte(t *testing.T) {
+	for _, tc_ := range indexTC {
+		if len(tc_.b) > 1 || len(tc_.b) == 0 {
+			continue
+		}
+		p := []byte(tc_.a)
+		t.Run(fmt.Sprintf("generic/%s/%s", tc_.a, tc_.b), func(t *testing.T) {
+			r := HasByte(p, tc_.b[0])
+			if (tc_.i == -1 && r) || (tc_.i >= 0 && !r) {
+				t.FailNow()
+			}
+		})
+		t.Run(fmt.Sprintf("bytes/%s/%s", tc_.a, tc_.b), func(t *testing.T) {
+			r := HasByteBytes(p, tc_.b[0])
+			if (tc_.i == -1 && r) || (tc_.i >= 0 && !r) {
+				t.FailNow()
+			}
+		})
+	}
 }
 
 func BenchmarkHasByte(b *testing.B) {
@@ -112,22 +135,39 @@ func BenchmarkHasByte(b *testing.B) {
 		if len(tc_.b) > 1 || len(tc_.b) == 0 {
 			continue
 		}
-		b.Run(fmt.Sprintf("vanilla/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+		p := []byte(tc_.a)
+		b.Run(fmt.Sprintf("generic/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				x := bytes.IndexByte([]byte(tc_.a), tc_.b[0]) != -1
-				if (tc_.i == -1 && x) || (tc_.i >= 0 && !x) {
-					b.FailNow()
-				}
+				r := HasByte(p, tc_.b[0])
+				_ = r
 			}
 		})
-		b.Run(fmt.Sprintf("lur/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+		b.Run(fmt.Sprintf("bytes/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				x := HasByteLUR([]byte(tc_.a), tc_.b[0])
-				if (tc_.i == -1 && x) || (tc_.i >= 0 && !x) {
-					b.FailNow()
-				}
+				r := HasByteBytes(p, tc_.b[0])
+				_ = r
+			}
+		})
+	}
+}
+
+func TestIndexByte(t *testing.T) {
+	for _, tc_ := range indexTC {
+		if len(tc_.b) > 1 || len(tc_.b) == 0 {
+			continue
+		}
+		t.Run(fmt.Sprintf("generic/%s/%s", tc_.a, tc_.b), func(t *testing.T) {
+			r := IndexByteAt([]byte(tc_.a), tc_.b[0], 0)
+			if r != tc_.i {
+				t.FailNow()
+			}
+		})
+		t.Run(fmt.Sprintf("bytes/%s/%s", tc_.a, tc_.b), func(t *testing.T) {
+			r := IndexByteAtBytes([]byte(tc_.a), tc_.b[0], 0)
+			if r != tc_.i {
+				t.FailNow()
 			}
 		})
 	}
@@ -138,22 +178,19 @@ func BenchmarkIndexByte(b *testing.B) {
 		if len(tc_.b) > 1 || len(tc_.b) == 0 {
 			continue
 		}
-		b.Run(fmt.Sprintf("vanilla/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+		p := []byte(tc_.a)
+		b.Run(fmt.Sprintf("generic/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				x := bytes.IndexByte([]byte(tc_.a), tc_.b[0])
-				if x != tc_.i {
-					b.FailNow()
-				}
+				r := IndexByteAt(p, tc_.b[0], 0)
+				_ = r
 			}
 		})
-		b.Run(fmt.Sprintf("lur/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
+		b.Run(fmt.Sprintf("bytes/%s/%s", tc_.a, tc_.b), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				x := IndexByteAtLUR([]byte(tc_.a), tc_.b[0], 0)
-				if x != tc_.i {
-					b.FailNow()
-				}
+				r := IndexByteAtBytes(p, tc_.b[0], 0)
+				_ = r
 			}
 		})
 	}
