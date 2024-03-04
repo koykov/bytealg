@@ -13,6 +13,15 @@ const (
 	bfmt4cr    = '\r'
 )
 
+var trimFmt4Table [256]bool
+
+func init() {
+	trimFmt4Table[bfmt4space] = true
+	trimFmt4Table[bfmt4tab] = true
+	trimFmt4Table[bfmt4nl] = true
+	trimFmt4Table[bfmt4cr] = true
+}
+
 // group: generic versions
 
 // TrimFmt4 removes default formatting bytes from both side of x.
@@ -62,21 +71,17 @@ func TrimRightBytesFmt4(p []byte) []byte {
 
 // Generic btrimFmt4.
 func btrimFmt4(p []byte, dir int) []byte {
+	_ = trimFmt4Table[255]
 	l, r := 0, len(p)-1
+	if r > 0 {
+		_ = p[r]
+	}
 	if dir == trimBoth || dir == trimLeft {
-		for ; l < len(p); l++ {
-			c := p[l]
-			if c != bfmt4space && c != bfmt4tab && c != bfmt4nl && c != bfmt4cr {
-				break
-			}
+		for ; trimFmt4Table[p[l]]; l++ {
 		}
 	}
 	if dir == trimBoth || dir == trimRight {
-		for ; r >= l; r-- {
-			c := p[r]
-			if c != bfmt4space && c != bfmt4tab && c != bfmt4nl && c != bfmt4cr {
-				break
-			}
+		for ; trimFmt4Table[p[r]]; r-- {
 		}
 	}
 	return p[l : r+1]
@@ -101,21 +106,17 @@ func TrimRightStringFmt4(p string) string {
 
 // Generic strimFmt4.
 func strimFmt4(p string, dir int) string {
+	_ = trimFmt4Table[255]
 	l, r := 0, len(p)-1
+	if r > 0 {
+		_ = p[r]
+	}
 	if dir == trimBoth || dir == trimLeft {
-		for ; l < len(p); l++ {
-			c := p[l]
-			if c != bfmt4space && c != bfmt4tab && c != bfmt4nl && c != bfmt4cr {
-				break
-			}
+		for ; trimFmt4Table[p[l]]; l++ {
 		}
 	}
 	if dir == trimBoth || dir == trimRight {
-		for ; r >= l; r-- {
-			c := p[r]
-			if c != bfmt4space && c != bfmt4tab && c != bfmt4nl && c != bfmt4cr {
-				break
-			}
+		for ; trimFmt4Table[p[r]]; r-- {
 		}
 	}
 	return p[l : r+1]
