@@ -7,6 +7,8 @@ import (
 	"github.com/koykov/byteseq"
 )
 
+// SkipFmt4 moves offset to first non-fmt4 byte in x.
+// Returns new offset and EOF flag.
 func SkipFmt4[T byteseq.Q](x T, offset int) (int, bool) {
 	if p, ok := byteseq.ToBytes(x); ok {
 		return skipFmt4(p, len(p), offset)
@@ -17,10 +19,14 @@ func SkipFmt4[T byteseq.Q](x T, offset int) (int, bool) {
 	return offset, false
 }
 
+// SkipBytesFmt4 moves offset to first non-fmt4 byte in bytes p.
+// Returns new offset and EOF flag.
 func SkipBytesFmt4(p []byte, offset int) (int, bool) {
 	return skipFmt4(p, len(p), offset)
 }
 
+// SkipStringFmt4 moves offset to first non-fmt4 byte in string s.
+// Returns new offset and EOF flag.
 func SkipStringFmt4(s string, offset int) (int, bool) {
 	return skipFmt4(byteconv.S2B(s), len(s), offset)
 }
