@@ -41,7 +41,7 @@ func skipFmt4(src []byte, n, offset int) (int, bool) {
 	if n-offset > skipFmt4TableThreshold {
 		offset, _ = skipFmtBin8(src, n, offset)
 	}
-	for ; skipTable4[src[offset]]; offset++ {
+	for ; offset < n && skipTable4[src[offset]]; offset++ {
 	}
 	return offset, offset == n
 }
