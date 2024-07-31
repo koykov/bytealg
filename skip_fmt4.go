@@ -1,6 +1,7 @@
 package bytealg
 
 import (
+	"math"
 	"unsafe"
 
 	"github.com/koykov/byteconv"
@@ -31,11 +32,13 @@ func SkipStringFmt4(s string, offset int) (int, bool) {
 	return skipFmt4(byteconv.S2B(s), len(s), offset)
 }
 
+const skipFmt4TableThreshold = 512
+
 // Table based approach of fmt skip.
 func skipFmt4(src []byte, n, offset int) (int, bool) {
 	_ = src[n-1]
-	_ = skipTable4[255]
-	if n-offset > 512 {
+	_ = skipTable4[math.MaxUint8]
+	if n-offset > skipFmt4TableThreshold {
 		offset, _ = skipFmtBin8(src, n, offset)
 	}
 	for ; skipTable4[src[offset]]; offset++ {
@@ -46,7 +49,7 @@ func skipFmt4(src []byte, n, offset int) (int, bool) {
 // Binary based approach of fmt skip.
 func skipFmtBin8(src []byte, n, offset int) (int, bool) {
 	_ = src[n-1]
-	_ = skipTable4[255]
+	_ = skipTable4[math.MaxUint8]
 	if *(*uint64)(unsafe.Pointer(&src[offset])) == binNlSpace7 {
 		offset += 8
 		for offset < n && *(*uint64)(unsafe.Pointer(&src[offset])) == binSpace8 {
@@ -57,7 +60,7 @@ func skipFmtBin8(src []byte, n, offset int) (int, bool) {
 }
 
 var (
-	skipTable4  = [256]bool{}
+	skipTable4  = [math.MaxUint8 + 1]bool{}
 	binNlSpace7 uint64
 	binSpace8   uint64
 )
