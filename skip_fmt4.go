@@ -17,6 +17,14 @@ func SkipFmt4[T byteseq.Q](x T, offset int) (int, bool) {
 	return offset, false
 }
 
+func SkipBytesFmt4(p []byte, offset int) (int, bool) {
+	return skipFmt4(p, len(p), offset)
+}
+
+func SkipStringFmt4(s string, offset int) (int, bool) {
+	return skipFmt4(byteconv.S2B(s), len(s), offset)
+}
+
 // Table based approach of fmt skip.
 func skipFmt4(src []byte, n, offset int) (int, bool) {
 	_ = src[n-1]
@@ -58,4 +66,4 @@ func init() {
 	binNlSpace7, binSpace8 = *(*uint64)(unsafe.Pointer(&binNlSpace7Bytes[0])), *(*uint64)(unsafe.Pointer(&binSpace8Bytes[0]))
 }
 
-var _ = SkipFmt4[string]
+var _, _, _ = SkipFmt4[string], SkipBytesFmt4, SkipStringFmt4
