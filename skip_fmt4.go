@@ -23,12 +23,20 @@ func SkipFmt4[T byteseq.Q](x T, offset int) (int, bool) {
 // SkipBytesFmt4 moves offset to first non-fmt4 byte in bytes p.
 // Returns new offset and EOF flag.
 func SkipBytesFmt4(p []byte, offset int) (int, bool) {
+	n := len(p)
+	if n == 0 {
+		return offset, true
+	}
 	return skipFmt4(p, len(p), offset)
 }
 
 // SkipStringFmt4 moves offset to first non-fmt4 byte in string s.
 // Returns new offset and EOF flag.
 func SkipStringFmt4(s string, offset int) (int, bool) {
+	n := len(s)
+	if n == 0 {
+		return offset, true
+	}
 	return skipFmt4(byteconv.S2B(s), len(s), offset)
 }
 
