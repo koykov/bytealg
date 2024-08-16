@@ -2,11 +2,11 @@ package bytealg
 
 import (
 	"bytes"
-	"reflect"
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
 
+	"github.com/koykov/byteconv"
 	"github.com/koykov/byteseq"
 )
 
@@ -78,7 +78,7 @@ func Grow(p []byte, newLen int) []byte {
 		return p
 	}
 	// Get byte array header.
-	h := *(*reflect.SliceHeader)(unsafe.Pointer(&p))
+	h := *(*byteconv.SliceHeader)(unsafe.Pointer(&p))
 	if newLen <= h.Cap {
 		// p already has enough space.
 		h.Len = newLen
