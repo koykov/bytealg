@@ -68,6 +68,18 @@ func Copy[T byteseq.Byteseq](p T) T {
 	return byteseq.B2Q[T](cpy)
 }
 
+// CopyBytes makes a copy of byte slice.
+func CopyBytes(p []byte) (r []byte) {
+	return append(r, p...)
+}
+
+// CopyString makes a copy of string.
+func CopyString(s string) (r string) {
+	var buf []byte
+	buf = append(buf, s...)
+	return byteconv.B2S(buf)
+}
+
 // Grow increases length of the byte array.
 //
 // Two cases are possible:
