@@ -32,13 +32,25 @@ func ToLower[T byteseq.Byteseq](p T) T { return Map(unicode.ToLower, p) }
 // ToTitle is an alloc-free replacement of bytes.ToTitle() function.
 func ToTitle[T byteseq.Byteseq](p T) T { return Map(unicode.ToTitle, p) }
 
-// Map returns modified p with all its characters modified according to the mapping function.
+// Map returns modified x with all its characters modified according to the mapping function.
 //
-// See bytes.Map() function for details.
-func Map[T byteseq.Byteseq](mapping func(r rune) rune, p T) T {
+// See bytes.Map()/strings.Map() function for details.
+func Map[T byteseq.Byteseq](mapping func(r rune) rune, x T) T {
+	if p, ok := byteseq.ToBytes(x); ok {
+		r := MapBytes(mapping, p)
+		return *(*T)(unsafe.Pointer(&r))
+	}
+	if s, ok := byteseq.ToString(x); ok {
+		r := MapString(mapping, s)
+		return *(*T)(unsafe.Pointer(&r))
+	}
+	return x
+}
+
+func MapBytes(mapping func(r rune) rune, p []byte) []byte {
 	maxbytes := len(p)
 	nbytes := 0
-	pb := byteseq.Q2B(p)
+	pb := p
 	for i := 0; i < len(p); {
 		wid := 1
 		r := rune(p[i])
@@ -62,10 +74,29 @@ func Map[T byteseq.Byteseq](mapping func(r rune) rune, p T) T {
 	return p[:nbytes]
 }
 
-// Copy makes a copy of byte array.
+func MapString(mapping func(r rune) rune, s string) string {
+	buf := make([]byte, 0, len(s)*2)
+	buf = append(buf, s...)
+	buf = MapBytes(mapping, buf)
+	return byteconv.B2S(buf)
+}
+
+// Copy makes a copy of byte sequence.
 func Copy[T byteseq.Byteseq](p T) T {
 	cpy := append([]byte(nil), p...)
 	return byteseq.B2Q[T](cpy)
+}
+
+// CopyBytes makes a copy of byte slice.
+func CopyBytes(p []byte) (r []byte) {
+	return append(r, p...)
+}
+
+// CopyString makes a copy of string.
+func CopyString(s string) (r string) {
+	var buf []byte
+	buf = append(buf, s...)
+	return byteconv.B2S(buf)
 }
 
 // Grow increases length of the byte array.
