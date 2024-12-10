@@ -26,11 +26,23 @@ func EqualSet[T byteseq.Byteseq](a, b []T) bool {
 // ToUpper is an alloc-free replacement of bytes.ToUpper() function.
 func ToUpper[T byteseq.Byteseq](p T) T { return Map(unicode.ToUpper, p) }
 
+func ToUpperBytes(p []byte) []byte { return MapBytes(unicode.ToUpper, p) }
+
+func ToUpperString(p string) string { return MapString(unicode.ToUpper, p) }
+
 // ToLower is an alloc-free replacement of bytes.ToLower() function.
 func ToLower[T byteseq.Byteseq](p T) T { return Map(unicode.ToLower, p) }
 
+func ToLowerBytes(p []byte) []byte { return MapBytes(unicode.ToLower, p) }
+
+func ToLowerString(p string) string { return MapString(unicode.ToLower, p) }
+
 // ToTitle is an alloc-free replacement of bytes.ToTitle() function.
 func ToTitle[T byteseq.Byteseq](p T) T { return Map(unicode.ToTitle, p) }
+
+func ToTitleBytes(p []byte) []byte { return MapBytes(unicode.ToTitle, p) }
+
+func ToTitleString(p string) string { return MapString(unicode.ToTitle, p) }
 
 // Map returns modified x with all its characters modified according to the mapping function.
 //
