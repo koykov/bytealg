@@ -73,6 +73,9 @@ func TrimRightBytesFmt4(p []byte) []byte {
 func btrimFmt4(p []byte, dir int) []byte {
 	_ = trimFmt4Table[255]
 	l, r := 0, len(p)-1
+	if r < 0 {
+		return p
+	}
 	if r > 0 {
 		_ = p[r]
 	}
